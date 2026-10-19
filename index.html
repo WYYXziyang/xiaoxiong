@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10132e" />
+  <title>小熊，生日快乐！</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+    :root {
+      --ink: #171936;
+      --night: #10132e;
+      --night-2: #1c2150;
+      --cream: #fff9ee;
+      --paper: #fffdf6;
+      --coral: #ff806c;
+      --yellow: #ffd66b;
+      --mint: #89e2c7;
+      --blue: #8bb9ff;
+      --purple: #a792ff;
+      --soft: rgba(255, 255, 255, .72);
+      --shadow: 0 24px 70px rgba(7, 8, 30, .28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--night);
+      font-family: 'Noto Sans SC', system-ui, -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', sans-serif;
+      overflow-x: hidden;
+    }
+    button { font: inherit; }
+    img { display: block; max-width: 100%; }
+
+    .site-shell { position: relative; isolation: isolate; overflow: hidden; }
+    .site-shell::before,
+    .site-shell::after {
+      content: '';
+      position: fixed;
+      z-index: -2;
+      width: 36rem;
+      height: 36rem;
+      border-radius: 50%;
+      filter: blur(18px);
+      opacity: .22;
+      pointer-events: none;
+    }
+    .site-shell::before { top: -16rem; left: -10rem; background: var(--coral); }
+    .site-shell::after { right: -14rem; top: 32rem; background: var(--purple); }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      opacity: .045;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+      mix-blend-mode: screen;
+    }
+
+    .topbar {
+      position: fixed;
+      z-index: 15;
+      top: 18px;
+      left: 50%;
+      width: min(1180px, calc(100% - 36px));
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px 12px 18px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      background: rgba(16,19,46,.58);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 12px 35px rgba(0,0,0,.12);
+      color: white;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: .85rem; letter-spacing: .16em; color: rgba(255,255,255,.82); }
+    .brand-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 18px var(--yellow); }
+    .music-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 999px;
+      padding: 8px 14px;
+      color: white;
+      background: rgba(255,255,255,.1);
+      cursor: pointer;
+      transition: .25s ease;
+    }
+    .music-toggle:hover { background: rgba(255,255,255,.19); transform: translateY(-1px); }
+    .music-toggle.is-playing .music-icon { animation: spin 2.4s linear infinite; }
+    .music-icon { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--yellow); color: var(--ink); font-size: .78rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hero {
+      position: relative;
+      min-height: 850px;
+      padding: 150px max(7vw, 28px) 110px;
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(340px, .85fr);
+      align-items: center;
+      gap: clamp(40px, 8vw, 120px);
+      background:
+        radial-gradient(circle at 73% 18%, rgba(139,185,255,.22), transparent 28%),
+        radial-gradient(circle at 18% 65%, rgba(255,128,108,.19), transparent 30%),
+        linear-gradient(160deg, var(--night) 0%, #161a3a 52%, #252056 100%);
+      color: white;
+    }
+    .stars, .stars::before, .stars::after {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: white;
+      content: '';
+      box-shadow: 9vw 9vh rgba(255,255,255,.8), 25vw 19vh rgba(255,214,107,.85), 49vw 8vh rgba(255,255,255,.75), 67vw 25vh rgba(255,255,255,.7), 79vw 11vh rgba(139,185,255,.8), 88vw 39vh rgba(255,255,255,.65), 8vw 46vh rgba(255,214,107,.75), 35vw 55vh rgba(255,255,255,.56), 59vw 42vh rgba(255,255,255,.7), 92vw 68vh rgba(255,214,107,.8), 18vw 79vh rgba(255,255,255,.55), 74vw 82vh rgba(255,255,255,.58);
+      animation: twinkle 4s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    .stars { left: 3vw; top: 6vh; opacity: .75; }
+    .stars::before { left: 0; top: 0; transform: translate(11vw, 4vh) scale(1.4); animation-delay: -1.3s; }
+    .stars::after { left: 0; top: 0; transform: translate(5vw, 9vh) scale(.8); animation-delay: -2.4s; }
+    @keyframes twinkle { from { opacity: .28; } to { opacity: .9; } }
+
+    .hero-copy { position: relative; z-index: 1; max-width: 670px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 22px; color: var(--yellow); font-size: .78rem; letter-spacing: .2em; text-transform: uppercase; }
+    .eyebrow::before { content: '✦'; font-size: 1rem; }
+    h1 { margin: 0; font-size: clamp(3.5rem, 9vw, 8.8rem); line-height: .95; letter-spacing: -.08em; font-weight: 900; text-wrap: balance; }
+    h1 em { display: block; color: var(--coral); font-style: normal; text-shadow: 3px 4px 0 rgba(255,214,107,.86); }
+    .hero-lede { max-width: 550px; margin: 28px 0 0; color: rgba(255,255,255,.72); font-size: clamp(1rem, 1.9vw, 1.22rem); line-height: 1.9; }
+    .hero-lede strong { color: var(--cream); font-weight: 700; }
+    .identity-note { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-top: 20px; padding: 9px 12px; border: 1px solid rgba(255,255,255,.16); border-radius: 12px; background: rgba(255,255,255,.07); color: rgba(255,255,255,.62); font-size: .78rem; }
+    .identity-note span { color: var(--yellow); font-size: .95rem; font-weight: 800; }
+    .identity-note i { font-style: normal; }
+    .identity-note b { color: var(--coral); font-size: 1.05rem; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+    .primary-btn, .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 999px;
+      padding: 13px 20px;
+      cursor: pointer;
+      transition: .25s ease;
+    }
+    .primary-btn { border: 0; background: var(--yellow); color: var(--ink); box-shadow: 0 10px 26px rgba(255,214,107,.24); font-weight: 800; }
+    .primary-btn:hover { transform: translateY(-3px) rotate(-1deg); box-shadow: 0 15px 30px rgba(255,214,107,.34); }
+    .ghost-btn { border: 1px solid rgba(255,255,255,.27); background: rgba(255,255,255,.07); color: white; }
+    .ghost-btn:hover { background: rgba(255,255,255,.14); transform: translateY(-3px); }
+    .mini-note { margin-top: 16px; color: rgba(255,255,255,.45); font-size: .78rem; }
+
+    .hero-visual { position: relative; min-height: 520px; display: grid; place-items: center; }
+    .sun { position: absolute; width: min(34vw, 390px); aspect-ratio: 1; border-radius: 50%; background: linear-gradient(135deg, rgba(255,214,107,.8), rgba(255,128,108,.12)); filter: blur(1px); box-shadow: 0 0 120px rgba(255,214,107,.28); }
+    .hero-card { position: relative; width: min(100%, 470px); padding: 14px 14px 52px; border-radius: 9px; background: var(--paper); color: var(--ink); box-shadow: var(--shadow); transform: rotate(3.5deg); }
+    .hero-card img { width: 100%; aspect-ratio: 1.34 / 1; object-fit: cover; border-radius: 4px; }
+    .hero-card figcaption { position: absolute; left: 24px; bottom: 15px; font-family: 'Ma Shan Zheng', cursive; font-size: 1.5rem; }
+    .tape { position: absolute; width: 112px; height: 30px; top: -17px; left: 50%; transform: translateX(-50%) rotate(-3deg); background: rgba(255,214,107,.75); clip-path: polygon(3% 10%, 97% 0, 100% 90%, 0 100%); }
+    .sticker { position: absolute; display: grid; place-items: center; width: 78px; height: 78px; border-radius: 50%; text-align: center; line-height: 1.1; font-size: .85rem; font-weight: 900; transform: rotate(-12deg); box-shadow: 0 8px 20px rgba(5,6,24,.2); }
+    .sticker.one { right: -35px; top: 16%; background: var(--mint); }
+    .sticker.two { left: -45px; bottom: 13%; background: var(--coral); color: white; transform: rotate(14deg); }
+    .orbit { position: absolute; inset: 7%; border: 1px dashed rgba(255,255,255,.22); border-radius: 50%; transform: rotate(-18deg); }
+    .orbit::after { content: '♡'; position: absolute; right: 2%; top: 5%; color: var(--coral); font-size: 2.4rem; transform: rotate(21deg); }
+
+    .section { position: relative; padding: 110px max(7vw, 24px); }
+    .section.light { background: var(--cream); }
+    .section.dark { background: linear-gradient(160deg, #181b40, #10132e); color: white; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-bottom: 42px; }
+    .section-kicker { margin: 0 0 11px; color: var(--coral); font-size: .78rem; letter-spacing: .18em; font-weight: 800; text-transform: uppercase; }
+    .dark .section-kicker { color: var(--yellow); }
+    h2 { margin: 0; max-width: 720px; font-size: clamp(2rem, 5vw, 4rem); line-height: 1.08; letter-spacing: -.05em; }
+    .section-desc { max-width: 360px; margin: 0; color: #66647d; line-height: 1.7; font-size: .95rem; }
+    .dark .section-desc { color: rgba(255,255,255,.6); }
+
+    .memory-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .memory-card { position: relative; grid-column: span 4; overflow: hidden; border-radius: 20px; background: var(--paper); box-shadow: 0 14px 35px rgba(31,28,67,.1); transition: .35s ease; }
+    .memory-card:nth-child(1), .memory-card:nth-child(6) { grid-column: span 6; }
+    .memory-card:nth-child(2), .memory-card:nth-child(7) { transform: translateY(24px); }
+    .memory-card:hover { transform: translateY(-8px) rotate(-.4deg); box-shadow: 0 22px 48px rgba(31,28,67,.18); }
+    .memory-card:nth-child(2):hover, .memory-card:nth-child(7):hover { transform: translateY(15px) rotate(.4deg); }
+    .memory-photo { position: relative; overflow: hidden; aspect-ratio: 1.16 / .96; background: #dedfe9; }
+    .memory-card:nth-child(1) .memory-photo, .memory-card:nth-child(6) .memory-photo { aspect-ratio: 1.65 / 1; }
+    .memory-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(11,13,38,.28)); pointer-events: none; }
+    .memory-photo img { width: 100%; height: 100%; object-fit: cover; transition: .7s ease; }
+    .memory-card:hover .memory-photo img { transform: scale(1.07); }
+    .memory-body { padding: 18px 19px 20px; }
+    .memory-no { color: #88859b; font-size: .72rem; letter-spacing: .16em; }
+    .memory-body h3 { margin: 8px 0 0; font-size: 1.07rem; line-height: 1.45; }
+    .memory-tag { display: inline-flex; margin-top: 14px; padding: 5px 9px; border-radius: 999px; background: #f0edff; color: #6552ce; font-size: .72rem; }
+    .memory-card:nth-child(3n) .memory-tag { background: #fff1df; color: #bd7133; }
+    .memory-card:nth-child(3n+1) .memory-tag { background: #e4faf3; color: #398f77; }
+
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 58px; }
+    .stat { padding: 19px 18px; border: 1px solid rgba(255,255,255,.13); border-radius: 16px; background: rgba(255,255,255,.06); }
+    .stat-num { display: block; color: var(--yellow); font-size: 1.8rem; font-weight: 900; letter-spacing: -.06em; }
+    .stat-label { display: block; margin-top: 5px; color: rgba(255,255,255,.56); font-size: .8rem; }
+
+    .letter-wrap { display: grid; grid-template-columns: .8fr 1.2fr; align-items: center; gap: clamp(40px, 8vw, 110px); }
+    .letter-art { position: relative; min-height: 360px; display: grid; place-items: center; }
+    .letter-blob { position: absolute; width: 280px; height: 280px; border-radius: 43% 57% 62% 38% / 38% 43% 57% 62%; background: linear-gradient(135deg, var(--coral), var(--yellow)); transform: rotate(12deg); opacity: .9; }
+    .letter-sun { position: absolute; width: 190px; height: 190px; border-radius: 50%; border: 2px dashed rgba(23,25,54,.4); transform: translate(36px, -34px); }
+    .letter-sun::before, .letter-sun::after { content: '✦'; position: absolute; color: var(--ink); font-size: 1.3rem; }
+    .letter-sun::before { top: 0; left: 28px; }
+    .letter-sun::after { right: 12px; bottom: 23px; }
+    .letter-emoji { position: relative; z-index: 1; font-size: 6rem; transform: rotate(-7deg); filter: drop-shadow(0 12px 8px rgba(26,23,50,.16)); }
+    .letter-card { position: relative; padding: clamp(25px, 4vw, 46px); border-radius: 22px; background: var(--paper); box-shadow: var(--shadow); }
+    .letter-card::before { content: ''; position: absolute; width: 80px; height: 22px; top: -12px; right: 12%; background: rgba(137,226,199,.85); transform: rotate(4deg); }
+    .letter-card h2 { font-family: 'Ma Shan Zheng', cursive; font-size: clamp(2.6rem, 5vw, 4.2rem); letter-spacing: .03em; }
+    .letter-card p { margin: 20px 0 0; color: #58576b; line-height: 2; }
+    .letter-card .signature { margin-top: 24px; color: #8a829e; text-align: right; font-family: 'Ma Shan Zheng', cursive; font-size: 1.55rem; }
+    .open-letter { margin-top: 24px; border: 0; background: var(--ink); color: white; }
+    .open-letter:hover { background: #262a5d; }
+    .hidden-message { max-height: 0; overflow: hidden; opacity: 0; transition: .5s ease; }
+    .hidden-message.show { max-height: 160px; opacity: 1; }
+    .hidden-message p { padding-top: 18px; color: #3f3e50; }
+
+    footer { padding: 34px 24px 44px; background: var(--cream); color: #8a879a; text-align: center; font-size: .8rem; }
+    footer span { color: var(--coral); }
+    .toast { position: fixed; z-index: 30; bottom: 24px; left: 50%; max-width: calc(100% - 32px); padding: 12px 16px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(16,19,46,.9); color: white; font-size: .84rem; box-shadow: 0 12px 34px rgba(0,0,0,.25); transform: translate(-50%, 20px); opacity: 0; pointer-events: none; transition: .3s ease; }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+    .confetti { position: fixed; z-index: 25; width: 9px; height: 16px; pointer-events: none; animation: fall 1.8s ease-out forwards; }
+    @keyframes fall { 0% { transform: translate(0, -20px) rotate(0); opacity: 1; } 100% { transform: translate(var(--x), 100vh) rotate(720deg); opacity: 0; } }
+
+    @media (max-width: 880px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 150px; }
+      .hero-visual { min-height: 470px; margin-top: 10px; }
+      .memory-card, .memory-card:nth-child(1), .memory-card:nth-child(6) { grid-column: span 6; }
+      .letter-wrap { grid-template-columns: 1fr; }
+      .letter-art { min-height: 260px; }
+    }
+    @media (max-width: 560px) {
+      .topbar { top: 10px; width: calc(100% - 20px); }
+      .brand { font-size: .68rem; letter-spacing: .1em; }
+      .music-toggle { padding: 7px 11px; font-size: .78rem; }
+      .hero { padding: 128px 20px 78px; }
+      h1 { font-size: clamp(3.5rem, 18vw, 6.2rem); }
+      .hero-visual { min-height: 360px; }
+      .hero-card { width: 92%; }
+      .sticker { width: 63px; height: 63px; font-size: .72rem; }
+      .sticker.one { right: -8px; }
+      .sticker.two { left: -10px; }
+      .section { padding: 78px 20px; }
+      .section-head { display: block; }
+      .section-desc { margin-top: 16px; }
+      .memory-grid { gap: 12px; }
+      .memory-card, .memory-card:nth-child(1), .memory-card:nth-child(6) { grid-column: span 12; }
+      .memory-card:nth-child(2), .memory-card:nth-child(7) { transform: none; }
+      .memory-card:nth-child(2):hover, .memory-card:nth-child(7):hover { transform: translateY(-8px); }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .letter-art { min-height: 220px; }
+      .letter-blob { width: 210px; height: 210px; }
+      .letter-sun { width: 145px; height: 145px; }
+      .letter-emoji { font-size: 4.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <div class="grain" aria-hidden="true"></div>
+    <header class="topbar">
+      <div class="brand"><span class="brand-dot"></span> BIRTHDAY ARCHIVE / 00:00+</div>
+      <button class="music-toggle" id="musicToggle" type="button" aria-label="播放或暂停音乐">
+        <span class="music-icon">♪</span><span id="musicLabel">音乐位</span>
+      </button>
+      <audio id="bgm" loop preload="metadata" src="music.mp3"></audio>
+    </header>
+
+    <main>
+      <section class="hero" id="top">
+        <div class="stars" aria-hidden="true"></div>
+        <div class="hero-copy">
+          <div class="eyebrow">一份过零点才送达的祝福</div>
+          <h1>小熊，<em>生日快乐！</em></h1>
+          <p class="hero-lede">今天的寿星请先收下这份<strong>“宿舍友情长期有效”</strong>的电子档案。里面有跑过的五公里、写过的作业、看过的戏，还有一群毕业后依然会突然集合的人。</p>
+          <div class="identity-note"><span>杜泽浩</span><i>2022 · 山东大学</i><b>→</b><i>浙江大学 / 山东大学</i></div>
+          <div class="hero-actions">
+            <a class="primary-btn" href="#memories">拆开回忆 <span>↓</span></a>
+            <button class="ghost-btn" id="surpriseBtn" type="button">点我领一颗彩蛋 ✨</button>
+          </div>
+          <div class="mini-note">友情状态：在线 · 生日祝福：已发送 · 感动进度：正在加载…</div>
+        </div>
+        <div class="hero-visual">
+          <div class="sun" aria-hidden="true"></div>
+          <div class="orbit" aria-hidden="true"></div>
+          <figure class="hero-card">
+            <span class="tape" aria-hidden="true"></span>
+            <img src="images/01-graduation.jpg" alt="毕业合照，照片里有两位寿星" />
+            <figcaption>毕业照里有俩寿星！</figcaption>
+            <span class="sticker one">俩寿星<br>双倍快乐</span>
+            <span class="sticker two">小熊<br>出没</span>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section light" id="memories">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">MEMORY FILES / 01—09</p>
+            <h2>小熊的友情相册，<br>每一页都很有戏。</h2>
+          </div>
+          <p class="section-desc">文件名就是故事标题。我们把那些看起来有点离谱、回想起来又很珍贵的瞬间，全部存档。</p>
+        </div>
+
+        <div class="memory-grid">
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/01-graduation.jpg" alt="毕业合照" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">01 / 毕业档案</span><h3>毕业！（注意有俩寿星）</h3><span class="memory-tag">双倍寿星，双倍快乐</span></div>
+          </article>
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/02-zibo.jpg" alt="淄博陶瓷琉璃博物馆" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">02 / 宿舍出游</span><h3>第一次宿舍出游淄博烧烤之旅去到淄博陶瓷琉璃博物馆</h3><span class="memory-tag">坐得很端正，玩得很开心</span></div>
+          </article>
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/03-reunion.jpg" alt="毕业季重聚合照" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">03 / 再见之前</span><h3>分开的人再次齐聚、为了分离，也为了更好的再见</h3><span class="memory-tag">见面会迟到，友情不会</span></div>
+          </article>
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/04-running.jpg" alt="校园跑照片" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">04 / 运动番</span><h3>和泽浩参加的校园跑，泽浩很给力29分钟5km！</h3><span class="memory-tag">跑得快，笑得更快</span></div>
+          </article>
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/05-chairs.jpg" alt="跑步后的合照" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">05 / 椅子传说</span><h3>跑步白嫖了俩椅子，但一个陨落了</h3><span class="memory-tag">椅生有梦，各自精彩</span></div>
+          </article>
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/06-lab.jpg" alt="水利实验时的可爱抓拍" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">06 / 抓拍现场</span><h3>上水利实验的时候看着可爱抓拍的</h3><span class="memory-tag">可爱不是偶然，是日常</span></div>
+          </article>
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/07-cybercafe.jpg" alt="网吧里写作业" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">07 / 菏泽支线</span><h3>神了，去菏泽看牡丹来着，第一晚体验一下泽浩的网吧之夜，这人居然来写作业？</h3><span class="memory-tag">网吧学习，主打一个反差</span></div>
+          </article>
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/08-handsome.jpg" alt="帅帅泽浩毕业照" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">08 / 毕业彩蛋</span><h3>帅帅泽浩毕业了</h3><span class="memory-tag">帅气毕业，持续营业</span></div>
+          </article>
+          <article class="memory-card">
+            <div class="memory-photo"><img src="images/09-opera.jpg" alt="戏曲课合照" loading="lazy" /></div>
+            <div class="memory-body"><span class="memory-no">09 / 戏曲课</span><h3>有幸陪着刘哥和泽浩上戏曲课这老师挺帅</h3><span class="memory-tag">老师很帅，记忆也很亮</span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section dark">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">FRIENDSHIP STATUS</p>
+            <h2>四舍五入，<br>我们已经一起过了很多年。</h2>
+          </div>
+          <p class="section-desc">从 2022 年一起走进山东大学，到如今各奔东西：你去浙大继续读研，我留在山大继续读研。地图上的距离变远了，群聊里的“在吗”还是随时能发出去。</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><span class="stat-num">09</span><span class="stat-label">张友情证据</span></div>
+          <div class="stat"><span class="stat-num">5KM</span><span class="stat-label">一起冲过的目标</span></div>
+          <div class="stat"><span class="stat-num">∞</span><span class="stat-label">可以重播的回忆</span></div>
+          <div class="stat"><span class="stat-num">100%</span><span class="stat-label">小熊生日快乐率</span></div>
+        </div>
+      </section>
+
+      <section class="section light" id="letter">
+        <div class="letter-wrap">
+          <div class="letter-art" aria-hidden="true">
+            <div class="letter-blob"></div>
+            <div class="letter-sun"></div>
+            <div class="letter-emoji">🎂</div>
+          </div>
+          <div class="letter-card">
+            <p class="section-kicker">A LETTER FOR 小熊</p>
+            <h2>今天先开心，<br>以后也要一直开心。</h2>
+            <p>小熊，生日快乐！从 2022 年大一入学山东大学，到现在各奔东西，你保研去了浙江大学，我还留在山东大学。愿你新的一岁，吃饭有人陪，跑步有人喊，作业有人提醒（当然，最好还是少一点作业）。愿你继续保留那份可爱、认真和偶尔突然出现在网吧写作业的奇妙坚持。</p>
+            <p>读研生活没有想象中轻松，我们都不太喜欢现在的日子，这一点不用假装洒脱。但暂时的不喜欢，不代表我们走错了路。先把眼前的每一天过好，允许自己累，允许自己慢一点；等下次见面，我们继续一起吐槽，也一起把生活往喜欢的方向推一小步。</p>
+            <p>谢谢你把青春里这么多好笑又闪亮的片段，分给了我们。今天的祝福可能隔着屏幕，但“下次见”一直有效。</p>
+            <div class="hidden-message" id="hiddenMessage"><p>最后一条隐藏消息：生日愿望可以大胆一点，反正我们这群人会负责在旁边起哄，也会在你需要的时候认真站在你这边。✨</p></div>
+            <button class="primary-btn open-letter" id="openLetter" type="button">拆开最后一封信 💌</button>
+            <div class="signature">— 你的朋友们，存档于 00:00 之后</div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer>愿每次见面，都有新的故事。<span>小熊，生日快乐！</span></footer>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script>
+    const toast = document.querySelector('#toast');
+    let toastTimer;
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    function confetti(count = 55) {
+      const colors = ['#ff806c', '#ffd66b', '#89e2c7', '#8bb9ff', '#a792ff'];
+      for (let i = 0; i < count; i += 1) {
+        const piece = document.createElement('i');
+        piece.className = 'confetti';
+        piece.style.left = `${40 + Math.random() * 20}%`;
+        piece.style.top = `${8 + Math.random() * 4}%`;
+        piece.style.background = colors[i % colors.length];
+        piece.style.setProperty('--x', `${(Math.random() - .5) * 90}vw`);
+        piece.style.transform = `rotate(${Math.random() * 80 - 40}deg)`;
+        piece.style.animationDelay = `${Math.random() * .25}s`;
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 2200);
+      }
+    }
+
+    document.querySelector('#surpriseBtn').addEventListener('click', () => {
+      confetti();
+      showToast('彩蛋送达：今天的小熊，允许比平时多开心一点！🎉');
+    });
+
+    document.querySelector('#openLetter').addEventListener('click', (event) => {
+      const message = document.querySelector('#hiddenMessage');
+      const isOpen = message.classList.toggle('show');
+      event.currentTarget.textContent = isOpen ? '已拆开，记得收好 💛' : '拆开最后一封信 💌';
+      if (isOpen) confetti(35);
+    });
+
+    const music = document.querySelector('#bgm');
+    const musicToggle = document.querySelector('#musicToggle');
+    const musicLabel = document.querySelector('#musicLabel');
+    musicToggle.addEventListener('click', async () => {
+      if (!music.paused) {
+        music.pause();
+        musicToggle.classList.remove('is-playing');
+        musicLabel.textContent = '音乐位';
+        return;
+      }
+      try {
+        await music.play();
+        musicToggle.classList.add('is-playing');
+        musicLabel.textContent = '正在播放';
+      } catch (error) {
+        musicLabel.textContent = '音乐位';
+      showToast('音乐文件还没找到：请把“阿桑 - 一直很安静.mp3”放到网页同目录并改名为 music.mp3。');
+      }
+    });
+    music.addEventListener('error', () => {
+      musicToggle.classList.remove('is-playing');
+      musicLabel.textContent = '音乐位';
+    });
+  </script>
+</body>
+</html>
